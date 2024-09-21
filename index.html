@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Spotify for ZeppOS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
+      body {
+        background: radial-gradient(circle at 50% 0%, #0a0f1f, #000000);
+        font-family: 'Orbitron', sans-serif;
+        color: #e2e8f0;
+        overflow: hidden;
+      }
+      input::placeholder {
+        color: #94a3b8;
+      }
+      .neon-border {
+        border: 2px solid #00ffc3;
+        box-shadow: 0 0 15px #00ffc3, 0 0 30px #00ffc3, inset 0 0 20px #00ffc3;
+      }
+      .neon-text {
+        color: #00ffc3;
+        text-shadow: 0 0 8px #00ffc3, 0 0 12px #00ffc3, 0 0 24px #00ffc3;
+      }
+      .neon-input {
+        box-shadow: 0 0 10px #00ffc3, 0 0 20px #00ffc3;
+      }
+      .neon-button {
+        background-color: #00ffc3;
+        box-shadow: 0 0 10px #00ffc3, 0 0 20px #00ffc3;
+        transition: transform 0.3s, box-shadow 0.3s;
+      }
+      .neon-button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 20px #00ffc3, 0 0 40px #00ffc3;
+      }
+      .container {
+        animation: glow-bg 3s ease-in-out infinite alternate;
+      }
+      @keyframes glow-bg {
+        from {
+          background: rgba(0, 255, 195, 0.2);
+        }
+        to {
+          background: rgba(0, 255, 195, 0.05);
+        }
+      }
+      .pulse {
+        animation: pulse 2s infinite;
+      }
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+          box-shadow: 0 0 15px #00ffc3;
+        }
+        50% {
+          transform: scale(1.05);
+          box-shadow: 0 0 25px #00ffc3;
+        }
+        100% {
+          transform: scale(1);
+          box-shadow: 0 0 15px #00ffc3;
+        }
+      }
+    </style>
+  </head>
+  <body class="min-h-screen flex flex-col justify-center items-center">
+    
+    <div class="flex items-center justify-center mb-16 relative">
+      <img
+        src="spotify.png"
+        alt="Spotify Logo"
+        class="h-24 w-24 mr-20 transform hover:scale-110 transition duration-300 ease-in-out neon-border pulse"
+        style="width: 100px; height: 100px;"
+      />
+      
+      <img
+        src="vincule.png"
+        alt="Connection Icon"
+        class="h-15 w-15 absolute left-1/2 transform -translate-x-1/2 hover:scale-110 transition duration-300 ease-in-out neon-border pulse"
+        style="width: 50px; height: 50px;"
+      />
+      
+      <img
+        src="zepp.png"
+        alt="Zepp Logo"
+        class="h-24 w-24 ml-20 transform hover:scale-110 transition duration-300 ease-in-out neon-border pulse"
+        style="width: 100px; height: 100px;"
+      />
+    </div>
+
+    <div class="container bg-gray-800 p-8 rounded-lg neon-border shadow-elegant w-full max-w-md text-center">
+      <h1 id="status-message" class="text-5xl font-bold neon-text mb-6">Success!</h1>
+      <p class="text-gray-300 mb-6 text-lg">
+        Copy the following <strong class="text-cyan-400">token</strong> and paste it in the Zepp app.
+      </p>
+
+      <div class="relative flex items-center">
+        <input
+          type="text"
+          id="code"
+          class="w-full h-16 text-2xl py-4 px-4 border neon-border bg-gray-700 text-gray-200 rounded-lg neon-input focus:outline-none focus:ring-4 focus:ring-cyan-400"
+          readonly
+        />
+        <button
+          id="copy-button"
+          class="absolute right-2 neon-button text-white py-2 px-4 rounded-lg focus:outline-none"
+        >
+          Copy
+        </button>
+      </div>
+
+      <p id="copy-message" class="mt-4 text-sm text-cyan-400 hidden">Code copied!</p>
+
+      <div id="error-message" class="mt-4 text-red-400 hidden">
+        <p>No token found in the URL. Possible causes of the error:</p>
+        <ul class="list-disc list-inside mt-2 text-left text-red-300">
+          <li>Incorrect or malformed URL.</li>
+          <li>Incorrect configuration of Spotify ID or Client Secret.</li>
+          <li>The Spotify authorization process was not completed correctly.</li>
+        </ul>
+      </div>
+    </div>
+
+    <script>
+      const urlParams = new URLSearchParams(window.location.search);
+      const code = urlParams.get("code");
+      const codeInput = document.getElementById("code");
+      const errorMessage = document.getElementById("error-message");
+      const statusMessage = document.getElementById("status-message");
+
+      if (code) {
+        codeInput.value = code;
+      } else {
+        statusMessage.textContent = "Something went wrong";
+        statusMessage.classList.remove("neon-text");
+        statusMessage.classList.add("text-red-400");
+        codeInput.value = "No code found in the URL.";
+        errorMessage.classList.remove("hidden");
+      }
+
+      const copyButton = document.getElementById("copy-button");
+      const copyMessage = document.getElementById("copy-message");
+
+      copyButton.addEventListener("click", function () {
+        navigator.clipboard.writeText(codeInput.value).then(function () {
+          copyMessage.classList.remove("hidden");
+          setTimeout(function () {
+            copyMessage.classList.add("hidden");
+          }, 2000);
+        });
+      });
+    </script>
+  </body>
+</html>
